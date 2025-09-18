@@ -1,10 +1,10 @@
 pipeline {
     agent any
+   tools {
+    maven 'maven3'   // exact name from Jenkins Global Tool Configuration
+    jdk 'jdk17'      // exact name from Jenkins Global Tool Configuration
+}
 
-    tools {
-        maven 'Maven3'   // Configured in Jenkins Global Tools
-        jdk 'Java17'     // Configured in Jenkins Global Tools
-    }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
