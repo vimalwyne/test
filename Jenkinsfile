@@ -1,60 +1,36 @@
 pipeline {
     agent any
-   tools {
-    maven 'maven3'   // exact name from Jenkins Global Tool Configuration
-    jdk 'jdk17'      // exact name from Jenkins Global Tool Configuration
-}
 
-
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
-        DOCKERHUB_REPO = 'your-dockerhub-username/myapp'
+    tools {
+        maven 'maven3'
+        jdk 'jdk17'
     }
 
     stages {
-    stage('Checkout') {
-        steps {
-            git branch: 'main',
-                credentialsId: 'github-pat',  // Add this line
-                url: 'https://github.com/vimalwyne/test.git'  // Use your actual repo URL
-        }
-    }
-}
-
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-pat',
+                    url: 'https://github.com/vimalwyne/test.git'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        stage('Docker Build') {
             steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $DOCKERHUB_REPO:latest .'
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                sh """
-                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
-                    docker push $DOCKERHUB_REPO:latest
-                """
+                sh 'docker build -t vimalwyne/myapp:latest .'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Build & Push successful!"
+            echo "✅ Build & push successful!"
         }
         failure {
             echo "❌ Build failed!"
