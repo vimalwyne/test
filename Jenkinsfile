@@ -12,10 +12,15 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/your-repo/myapp.git'
+    stage('Checkout') {
+        steps {
+            git branch: 'main',
+                credentialsId: 'github-pat',  // Add this line
+                url: 'https://github.com/vimalwyne/test.git'  // Use your actual repo URL
+        }
+    }
+}
+
             }
         }
 
